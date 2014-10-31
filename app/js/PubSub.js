@@ -1,33 +1,33 @@
 var pubSub = {
 	topics: {},
 
-	subscribe: function (theme, listener) {
+	subscribe: function (subsciption, listener) {
 		self = this;
 		// Create the topic's object if not yet created
-		if (!this.topics[theme]) this.topics[theme] = {queue: []};
+		if (!this.topics[subsciption]) this.topics[subsciption] = {queue: []};
 
 		// Add the listener to queue
-		var index = this.topics[theme].queue.push(listener) - 1;
+		var index = this.topics[subsciption].queue.push(listener) - 1;
 
 		// Provide handle back for removal of topic
 		return {
 			remove: function () {
-				delete self.topics[theme].queue[index];
+				delete self.topics[subsciption].queue[index];
 				// What if the last subscriber in queue is deleted?
-				if (self.topics[theme].queue.length == 0) {
-					delete self.topics[theme];
+				if (self.topics[subsciption].queue.length == 0) {
+					delete self.topics[subsciption];
 				}
 			}
 		};
 	},
-	publish: function (theme, info) {
+	publish: function (subscription, info) {
 		// If the theme doesn't exist, or there's no listeners in queue, just leave
-		if (!this.topics[theme] || !this.topics[theme].queue.length) return;
+		if (!this.topics[subscription] || !this.topics[subscription].queue.length) return;
 
 		// Cycle through topics queue, fire!
-		var items = this.topics[theme].queue;
+		var items = this.topics[subscription].queue;
 		items.forEach(function (item) {
 			item(info || {});
 		});
 	}
-}
+};
